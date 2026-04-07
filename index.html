@@ -1,0 +1,703 @@
+<<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Хобби-навигатор | Найди своё хобби</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* ========== СТРАНИЦА АФИШИ ========== */
+        .poster-screen {
+            background: linear-gradient(145deg, #0f0f23, #1a1a35);
+            border-radius: 2.5rem;
+            overflow: hidden;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .poster-image {
+            width: 100%;
+            height: auto;
+            background: linear-gradient(120deg, #ff6b4a, #ffb347);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .poster-image .emoji-big {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .poster-image h1 {
+            font-size: 2.5rem;
+            color: white;
+            letter-spacing: -1px;
+        }
+
+        .poster-image p {
+            color: rgba(255,255,255,0.9);
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .poster-content {
+            padding: 2rem;
+            background: white;
+        }
+
+        .poster-content h2 {
+            color: #1a1a2e;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+        }
+
+        .poster-content p {
+            color: #2d3e50;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature {
+            background: #f0f2f8;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #ff6b4a;
+        }
+
+        .start-btn {
+            background: #ff6b4a;
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 60px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            margin-top: 1rem;
+            box-shadow: 0 6px 14px rgba(255, 107, 74, 0.3);
+        }
+
+        .start-btn:hover {
+            background: #e55a3b;
+            transform: scale(0.98);
+        }
+
+        /* ========== ОПРОСНИК (вторая страница) ========== */
+        .quiz-screen {
+            display: none;
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .cat-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 0.7rem 1.3rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cat-btn.active {
+            background: #ff6b4a;
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 74, 0.4);
+        }
+
+        .cat-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .quiz-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .cat-label {
+            background: #ff6b4a20;
+            color: #ff6b4a;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .q-counter {
+            color: #6c7a89;
+            font-size: 0.9rem;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a2a32;
+            margin-bottom: 2rem;
+            line-height: 1.3;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .option-item {
+            background: #f8fafc;
+            border: 1.5px solid #e2edf2;
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            color: #1e2f3a;
+        }
+
+        .option-item:hover {
+            background: #fff5eb;
+            border-color: #ffb347;
+            transform: translateX(5px);
+        }
+
+        .opt-letter {
+            font-weight: 800;
+            background: #e9ecef;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            color: #ff6b4a;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            border: none;
+            background: #eef2f5;
+            padding: 0.7rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #ff6b4a;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e55a3b;
+            transform: scale(0.97);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #cbd5e1;
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            text-align: center;
+        }
+
+        .result-emoji {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #ff6b4a, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .result-desc {
+            background: #fef7e0;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            margin: 1rem 0;
+            text-align: left;
+            line-height: 1.5;
+            color: #2d3e45;
+        }
+
+        .restart-btn {
+            background: #ff6b4a;
+            color: white;
+            margin-top: 0.5rem;
+        }
+
+        .back-to-poster {
+            background: #2d3e50;
+            color: white;
+            margin-top: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 1.8rem;
+            color: #8899b0;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-card {
+                padding: 1.2rem;
+            }
+            .question-text {
+                font-size: 1.2rem;
+            }
+            .poster-image h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <!-- ЭКРАН 1: АФИША / ВИЗИТКА -->
+    <div id="posterScreen" class="poster-screen">
+        <div class="poster-image">
+            <div class="emoji-big">🎯✨🎨</div>
+            <h1>Спасённое хобби</h1>
+            <p>Найди занятие, которое зажжёт тебя</p>
+        </div>
+        <div class="poster-content">
+            <h2>📌 О проекте</h2>
+            <p>
+                Мы помогаем людям открыть свои истинные интересы — в творчестве, спорте, интеллектуальных играх, 
+                стратегиях и коллекционировании. Просто ответь на вопросы, и нейросеть (ну почти 😄) подскажет, 
+                какое хобби тебе идеально подойдёт.
+            </p>
+            <div class="feature-list">
+                <span class="feature">🎨 5 направлений</span>
+                <span class="feature">🧠 4 вопроса в каждом</span>
+                <span class="feature">⚡ 2 минуты</span>
+                <span class="feature">🎯 Персональный результат</span>
+            </div>
+            <button class="start-btn" id="startQuizBtn">🚀 Пройти опросник →</button>
+            <p style="margin-top: 1rem; font-size: 0.8rem; color: #6c7a89; text-align: center;">
+                🔥 Желаем помочь людям найти своё хобби
+            </p>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 2: ОПРОСНИК (изначально скрыт) -->
+    <div id="quizScreen" class="quiz-screen">
+        <div class="category-tabs" id="categoryTabs"></div>
+        <div id="quizContainer"></div>
+        <footer>🧡 Проект профориентации | 5 опросников по твоим интересам</footer>
+    </div>
+</div>
+
+<script>
+    // ---------- ДАННЫЕ ОПРОСНИКОВ ----------
+    const SURVEYS = {
+        art: {
+            name: "🎨 Творчество и рукоделие",
+            questions: [
+                { text: "Что вам ближе?", options: [
+                    { text: "Работа с цветом и композицией: смешивать краски, выстраивать кадр, подбирать цвета.", type: "a" },
+                    { text: "Работа с формами и объемами: лепить, собирать, придавать форму материалу.", type: "b" },
+                    { text: "Работа с ритмом и мелодией: чувствовать такт, подбирать аккорды, наслаждаться звуком.", type: "c" },
+                    { text: "Работа с текстурами и узорами: чувствовать ткань, нити, создавать сложные переплетения.", type: "d" }
+                ] },
+                { text: "Ваш идеальный результат — это...", options: [
+                    { text: "Картина, фотография, цифровой арт — то, чем можно любоваться.", type: "a" },
+                    { text: "Скульптура, керамика, модель, украшение — то, что можно потрогать и поставить на полку.", type: "b" },
+                    { text: "Песня, мелодия, ритм — то, что можно услышать и исполнить.", type: "c" },
+                    { text: "Свитер, шарф, вышитое полотно, свеча — то, что можно использовать.", type: "d" }
+                ] },
+                { text: "В магазине для хобби вас больше тянет в отдел...", options: [
+                    { text: "Красок, холстов, кистей и графических планшетов.", type: "a" },
+                    { text: "Глины, полимерной глины, инструментов для резьбы и сборки.", type: "b" },
+                    { text: "Музыкальных инструментов, нот и оборудования для записи.", type: "c" },
+                    { text: "Пряжи, тканей, ниток и материалов для декора.", type: "d" }
+                ] },
+                { text: "Процесс для вас — это...", options: [
+                    { text: "Создание идеального образа, где важна каждая деталь.", type: "a" },
+                    { text: "Превращение бесформенного материала в нечто конкретное и красивое.", type: "b" },
+                    { text: "Импровизация и выражение эмоций через звук.", type: "c" },
+                    { text: "Расслабляющий, монотонный ритуал, приносящий умиротворение.", type: "d" }
+                ] }
+            ],
+            results: {
+                a: "🎨 Изобразительное искусство (Живопись, графика, цифровая иллюстрация, фотография)",
+                b: "🏺 Создание объемных объектов (Лепка из глины/полимерной глины, создание моделей, ювелирное дело)",
+                c: "🎵 Музыка (Игра на инструменте, пение, создание электронной музыки, диджеинг)",
+                d: "🧵 Рукоделие и прикладное творчество (Вязание, вышивка, шитье, мыловарение, свечеварение)"
+            }
+        },
+        sport: {
+            name: "🏃 Спорт и активный отдых",
+            questions: [
+                { text: "Что для вас важнее в активности?", options: [
+                    { text: "Чувство адреналина, скорость, преодоление себя.", type: "a" },
+                    { text: "Физическое совершенство, сила, выносливость, гибкость.", type: "b" },
+                    { text: "Единение с природой, долгое пребывание на свежем воздухе.", type: "c" },
+                    { text: "Чувство ритма, пластика, грация.", type: "d" }
+                ] },
+                { text: "Идеальная тренировка для вас проходит...", options: [
+                    { text: "На склоне горы, в быстрой реке, на гоночной трассе.", type: "a" },
+                    { text: "В зале, на стадионе, с четким планом упражнений.", type: "b" },
+                    { text: "В лесу, в горах, у озера, с рюкзаком за плечами.", type: "c" },
+                    { text: "В танцевальном классе, где главное — музыка и движение.", type: "d" }
+                ] },
+                { text: "Ваш главный мотиватор — это...", options: [
+                    { text: "Победа в соревновании (с собой или другими).", type: "a" },
+                    { text: "Видимый прогресс: больше вес, лучше форма, выше гибкость.", type: "b" },
+                    { text: "Новые впечатления и красоты по пути.", type: "c" },
+                    { text: "Удовольствие от самого процесса движения.", type: "d" }
+                ] },
+                { text: "Какую экипировку вы готовы с удовольствием выбирать?", options: [
+                    { text: "Сноуборд, горный велосипед, снаряжение для альпинизма или дайвинга.", type: "a" },
+                    { text: "Гантели, коврик для йоги, абонемент в тренажерный зал.", type: "b" },
+                    { text: "Прочную треккинговую обувь, палатки, туристическое снаряжение.", type: "c" },
+                    { text: "Удобную одежду для танцев или специальную обувь.", type: "d" }
+                ] }
+            ],
+            results: {
+                a: "🏂 Экстремальные и скоростные виды спорта (Горные лыжи/сноуборд, скалолазание, маунтинбайк, рафтинг)",
+                b: "💪 Фитнес и оздоровительные практики (Тяжелая атлетика, кроссфит, йога, пилатес, плавание)",
+                c: "⛰️ Активный туризм и походы (Треккинг, велотуризм, каякинг, бердвотчинг)",
+                d: "💃 Танцы и ритмика (Современные танцы, балет, зумба, танцы народов мира)"
+            }
+        },
+        intellect: {
+            name: "🧠 Интеллектуальная деятельность",
+            questions: [
+                { text: "Вам интереснее изучать...", options: [
+                    { text: "Прошлое: как жили люди, причины и следствия событий.", type: "a" },
+                    { text: "Мироздание: законы природы, устройство Вселенной, технологии.", type: "b" },
+                    { text: "Человека: его психику, поведение, культуру и язык.", type: "c" },
+                    { text: "Конкретные практические навыки для применения здесь и сейчас.", type: "d" }
+                ] },
+                { text: "Свободный вечер за изучением чего-то нового — это...", options: [
+                    { text: "Просмотр исторического документального фильма или чтение мемуаров.", type: "a" },
+                    { text: "Изучение статьи о последних научных открытиях или просмотр курса по программированию.", type: "b" },
+                    { text: "Чтение книги по психологии или практика иностранного языка с носителем.", type: "c" },
+                    { text: "Прохождение онлайн-курса по тайм-менеджменту или финансовой грамотности.", type: "d" }
+                ] },
+                { text: "Идеальный формат получения знаний для вас — это...", options: [
+                    { text: "Архивные документы, музеи, лекции по истории искусств.", type: "a" },
+                    { text: "Научно-популярные журналы, технические форумы, онлайн-курсы по точным наукам.", type: "b" },
+                    { text: "Языковые приложения, книги по антропологии, общение с людьми из других культур.", type: "c" },
+                    { text: "Практические вебинары, бизнес-литература, прикладные мастер-классы.", type: "d" }
+                ] },
+                { text: "Результатом вашего интеллектуального хобби вы считаете...", options: [
+                    { text: "Глубокое понимание определенной исторической эпохи.", type: "a" },
+                    { text: "Умение разбираться в сложной теме или владение новым технологическим навыком.", type: "b" },
+                    { text: "Свободный разговор на иностранном языке или понимание мотивов людей.", type: "c" },
+                    { text: "Применение полученных знаний для улучшения своей жизни или карьеры.", type: "d" }
+                ] }
+            ],
+            results: {
+                a: "📜 История и искусствоведение (Углубленное изучение исторических периодов, посещение музеев, генеалогия)",
+                b: "🔬 Естественные науки и технологии (Астрономия, физика, программирование, робототехника)",
+                c: "🌍 Гуманитарные науки и лингвистика (Изучение иностранных языков, психология, философия, культурология)",
+                d: "📚 Прикладное самообразование (Прохождение онлайн-курсов, изучение финансов, проф. развитие)"
+            }
+        },
+        strategy: {
+            name: "♟️ Стратегия и логика",
+            questions: [
+                { text: "Что приносит вам большее удовлетворение?", options: [
+                    { text: "Построить идеальный долгосрочный план и увидеть, как он срабатывает.", type: "a" },
+                    { text: "Мгновенно среагировать на ход соперника и найти нестандартное решение.", type: "b" },
+                    { text: "Разгадать тайну, докопаться до сути, получив все пазлы головоломки.", type: "c" },
+                    { text: "Создать сложную и эффективную систему, которая работает сама.", type: "d" }
+                ] },
+                { text: "Вы предпочитаете играть...", options: [
+                    { text: "В долгие стратегические игры, где нужно думать на много ходов вперед (например, 'Цивилизация').", type: "a" },
+                    { text: "В динамичные игры с элементами блефа и быстрого принятия решений (например, покер, 'Мафия').", type: "b" },
+                    { text: "В детективные квесты, головоломки и игры на дедукцию.", type: "c" },
+                    { text: "В одиночные пасьянсы, конструкторы и логические задачи.", type: "d" }
+                ] },
+                { text: "Ваша сильная сторона в решении задач — это...", options: [
+                    { text: "Стратегическое мышление и планирование ресурсов.", type: "a" },
+                    { text: "Психология и умение 'читать' людей.", type: "b" },
+                    { text: "Аналитическое мышление и внимание к деталям.", type: "c" },
+                    { text: "Абстрактно-логическое мышление и системный подход.", type: "d" }
+                ] },
+                { text: "Какое поле деятельности вам кажется наиболее интересным?", options: [
+                    { text: "Управление виртуальным государством или армией.", type: "a" },
+                    { text: "Игра в казино или на фондовой бирже.", type: "b" },
+                    { text: "Расследование преступлений или разгадывание шифров.", type: "c" },
+                    { text: "Создание алгоритмов или проектирование схем.", type: "d" }
+                ] }
+            ],
+            results: {
+                a: "👑 Стратегические игры (Шахматы, Го, настольные варгеймы, глобальные компьютерные стратегии)",
+                b: "🎭 Тактические и психологические игры (Покер, бридж, 'Мафия', дебаты)",
+                c: "🔍 Головоломки и детективы (Судоку, квесты в реальности, криптография, нарды)",
+                d: "🧩 Конструирование и логические системы (Сборка сложных конструкторов, программирование, решение мат. задач)"
+            }
+        },
+        collecting: {
+            name: "🏺 Коллекционирование",
+            questions: [
+                { text: "Что вас больше всего привлекает в предмете?", options: [
+                    { text: "Его эстетика, дизайн и художественная ценность.", type: "a" },
+                    { text: "Его история, происхождение и связь с прошлым.", type: "b" },
+                    { text: "Его редкость, уникальность и финансовая стоимость.", type: "c" },
+                    { text: "Ностальгические чувства и личные воспоминания.", type: "d" }
+                ] },
+                { text: "Основной процесс коллекционирования для вас — это...", options: [
+                    { text: "Поиск и приобретение недостающих экземпляров.", type: "a" },
+                    { text: "Изучение, атрибуция и систематизация своей коллекции.", type: "b" },
+                    { text: "Торги, обмен и процесс 'охоты' за редким предметом.", type: "c" },
+                    { text: "Демонстрация коллекции и общение с единомышленниками.", type: "d" }
+                ] },
+                { text: "Идеальная коллекция — это...", options: [
+                    { text: "Полное, завершенное собрание, где есть все элементы серии.", type: "a" },
+                    { text: "Тематическое собрание, которое рассказывает определенную историю.", type: "b" },
+                    { text: "Набор самых ценных и редких экземпляров в своей области.", type: "c" },
+                    { text: "Личный 'музей', который отражает ваш внутренний мир.", type: "d" }
+                ] },
+                { text: "Что доставляет наибольшее удовольствие?", options: [
+                    { text: "Момент, когда вы находите именно тот предмет, который давно искали.", type: "a" },
+                    { text: "Процесс изучения нового о своем экспонате и упорядочивания коллекции.", type: "b" },
+                    { text: "Осознание того, что ваша коллекция представляет инвестиционную ценность.", type: "c" },
+                    { text: "Возможность поделиться своей коллекцией и рассказать о ней.", type: "d" }
+                ] }
+            ],
+            results: {
+                a: "🖼️ Комплектование серий (Коллекционирование виниловых пластинок, комиксов одной серии, фигурок Funko Pop)",
+                b: "📜 Тематическое и историческое коллекционирование (Нумизматика, филателия, фалеристика, антиквариат)",
+                c: "💰 Инвестиционное коллекционирование (Коллекционирование редкого искусства, винтажных часов, монет из драгметаллов)",
+                d: "📷 Ностальгическое и личное коллекционирование (Коллекционирование предметов из детства, открыток, камней и минералов из путешествий)"
+            }
+        }
+    };
+
+    // ---------- ЛОГИКА ----------
+    let currentCategory = "art";
+    let currentQuestionIndex = 0;
+    let answers = [];
+    let finished = false;
+
+    // Переключение между экранами
+    const posterScreen = document.getElementById('posterScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const startBtn = document.getElementById('startQuizBtn');
+
+    startBtn.addEventListener('click', () => {
+        posterScreen.style.display = 'none';
+        quizScreen.style.display = 'block';
+        resetQuiz();
+        renderCategoryTabs();
+        renderCurrentQuestion();
+    });
+
+    function showPoster() {
+        posterScreen.style.display = 'block';
+        quizScreen.style.display = 'none';
+        resetQuiz();
+    }
+
+    function resetQuiz() {
+        currentQuestionIndex = 0;
+        answers = [];
+        finished = false;
+    }
+
+    function renderCategoryTabs() {
+        const container = document.getElementById("categoryTabs");
+        const categories = Object.keys(SURVEYS);
+        container.innerHTML = categories.map(cat => `
+            <button class="cat-btn ${currentCategory === cat ? 'active' : ''}" data-cat="${cat}">
+                ${SURVEYS[cat].name}
+            </button>
+        `).join("");
+        document.querySelectorAll(".cat-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const newCat = btn.dataset.cat;
+                if (newCat === currentCategory) return;
+                currentCategory = newCat;
+                resetQuiz();
+                renderCategoryTabs();
+                renderCurrentQuestion();
+            });
+        });
+    }
+
+    function selectAnswer(type) {
+        if (finished) return;
+        answers.push(type);
+        if (currentQuestionIndex + 1 < SURVEYS[currentCategory].questions.length) {
+            currentQuestionIndex++;
+            renderCurrentQuestion();
+        } else {
+            finished = true;
+            renderResult();
+        }
+    }
+
+    function goPrev() {
+        if (finished) return;
+        if (currentQuestionIndex > 0) {
+            answers.pop();
+            currentQuestionIndex--;
+            renderCurrentQuestion();
+        }
+    }
+
+    function renderCurrentQuestion() {
+        const container = document.getElementById("quizContainer");
+        const survey = SURVEYS[currentCategory];
+        const q = survey.questions[currentQuestionIndex];
+        const total = survey.questions.length;
+
+        const optionsHtml = q.options.map((opt, idx) => {
+            const letter = opt.type.toUpperCase();
+            return `
+                <div class="option-item" data-type="${opt.type}">
+                    <span class="opt-letter">${letter}</span>
+                    <span>${opt.text}</span>
+                </div>
+            `;
+        }).join("");
+
+        const html = `
+            <div class="quiz-card">
+                <div class="question-header">
+                    <span class="cat-label">${survey.name}</span>
+                    <span class="q-counter">${currentQuestionIndex+1} / ${total}</span>
+                </div>
+                <div class="question-text">${q.text}</div>
+                <div class="options-list" id="optionsList">
+                    ${optionsHtml}
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn-secondary" id="prevBtn" ${currentQuestionIndex === 0 ? 'disabled' : ''}>← Назад</button>
+                    <button class="btn-secondary" id="backToPosterBtn">🏠 На главную</button>
+                </div>
+            </div>
+        `;
+        container.innerHTML = html;
+
+        document.querySelectorAll(".option-item").forEach(el => {
+            el.addEventListener("click", () => {
+                const type = el.dataset.type;
+                selectAnswer(type);
+            });
+        });
+
+        document.getElementById("prevBtn")?.addEventListener("click", goPrev);
+        document.getElementById("backToPosterBtn")?.addEventListener("click", showPoster);
+    }
+
+    function renderResult() {
+        const survey = SURVEYS[currentCategory];
+        const counts = { a: 0, b: 0, c: 0, d: 0 };
+        for (let ans of answers) counts[ans]++;
+        let maxType = "a", maxCount = 0;
+        for (let [type, count] of Object.entries(counts)) {
+            if (count > maxCount) { maxCount = count; maxType = type; }
+        }
+        const resultText = survey.results[maxType];
+        const descMap = {
+            art: { a: "🎨 Тебе нравится создавать визуальные образы", b: "🏺 Работа руками и объём", c: "🎵 Музыка — твоя стихия", d: "🧵 Рукоделие приносит умиротворение" },
+            sport: { a: "🏂 Ты ищешь драйв и скорость", b: "💪 Физическое совершенство", c: "⛰️ Любишь природу", d: "💃 Ритм и грация" },
+            intellect: { a: "📜 Тебя влечёт прошлое", b: "🔬 Хочешь понять законы мира", c: "🌍 Интересен человек и культура", d: "📚 Ты практик" },
+            strategy: { a: "👑 Стратег до мозга костей", b: "🎭 Читаешь людей", c: "🔍 Детективный склад ума", d: "🧩 Системный мыслитель" },
+            collecting: { a: "🖼️ Эстетика и полнота", b: "📜 История и редкость", c: "💰 Инвестиции", d: "📷 Ностальгия" }
+        };
+        const desc = descMap[currentCategory]?.[maxType] || "Попробуй разные хобби!";
+
+        const html = `
+            <div class="result-card">
+                <div class="result-emoji">✨</div>
+                <div class="result-title">Твоё направление</div>
+                <div class="result-desc">
+                    <strong>${resultText}</strong>
+                    <p style="margin-top: 12px;">${desc}</p>
+                </div>
+                <button class="restart-btn" id="restartSurveyBtn">🔄 Пройти заново</button>
+                <button class="back-to-poster" id="backToPosterBtn2">🏠 На главную</button>
+            </div>
+        `;
+        document.getElementById("quizContainer").innerHTML = html;
+        document.getElementById("restartSurveyBtn")?.addEventListener("click", () => { resetQuiz(); renderCurrentQuestion(); });
+        document.getElementById("backToPosterBtn2")?.addEventListener("click", showPoster);
+    }
+
+    // Инициализация: показываем афишу
+    posterScreen.style.display = 'block';
+    quizScreen.style.display = 'none';
+</script>
+</body>
+</html>
