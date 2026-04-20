@@ -78,73 +78,6 @@
             color: black;
         }
 
-        /* НОВЫЙ БЛОК: ФОТО + НИКНЕЙМЫ + ПЛАШКА С ДАТАМИ */
-        .user-profile {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 2rem;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .avatar {
-            width: 70px;
-            height: 70px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            flex-shrink: 0;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-
-        .user-names {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-        }
-
-        .memorial-dates {
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            color: #ffd966;
-            display: inline-block;
-            width: fit-content;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
-
-        body.visually-impaired .user-profile {
-            background: #111;
-            border: 1px solid #ffff99;
-        }
-        body.visually-impaired .memorial-dates {
-            background: black;
-            color: #ffff99;
-            border: 1px solid #ffff99;
-            font-size: 1rem;
-        }
-        body.visually-impaired .user-names {
-            color: #ffff99;
-        }
-
         .main-container {
             max-width: 1100px;
             margin: 0 auto;
@@ -349,28 +282,12 @@
             .question-text { font-size: 1.2rem; }
             .accessibility-bar { gap: 8px; }
             .access-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
-            .user-profile { flex-direction: column; text-align: center; }
-            .memorial-dates { margin-top: 0.2rem; }
         }
     </style>
 </head>
 <body>
 <div class="main-container">
-    <!-- НОВЫЙ БЛОК: ФОТО + НИКНЕЙМЫ + ПЛАШКА С ДАТАМИ -->
-    <div class="user-profile">
-        <div class="avatar">
-            🧑‍🦱
-        </div>
-        <div class="user-info">
-            <div class="user-names">
-                🏷️ Чум | @chum_pro | Прозвище: Чумба
-            </div>
-            <div class="memorial-dates">
-                📅 Памятные даты: 18.04.2026
-            </div>
-        </div>
-    </div>
-
+    <!-- ПАНЕЛЬ ДОСТУПНОСТИ (БЕЗ ПЛАШКИ С НИКОМ И ДАТАМИ) -->
     <div class="accessibility-bar">
         <button class="access-btn" id="visionBtn">👁️ Режим для слабовидящих</button>
         <button class="access-btn" id="normalVisionBtn">🌞 Обычный режим</button>
