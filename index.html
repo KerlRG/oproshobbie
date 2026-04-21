@@ -33,7 +33,6 @@
             font-size: var(--font-size-base);
         }
 
-        /* РЕЖИМ ДЛЯ СЛАБОВИДЯЩИХ */
         body.visually-impaired {
             --bg-gradient-start: #000000;
             --bg-gradient-end: #1a1a1a;
@@ -83,7 +82,6 @@
             margin: 0 auto;
         }
 
-        /* ПАНЕЛЬ ДОСТУПНОСТИ */
         .accessibility-bar {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -118,7 +116,6 @@
             box-shadow: 0 0 0 2px white;
         }
 
-        /* ОСНОВНЫЕ СТИЛИ */
         .poster-screen {
             background: linear-gradient(145deg, #0f0f23, #1a1a35);
             border-radius: 2.5rem;
@@ -174,34 +171,20 @@
             display: none;
         }
 
-        .category-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-            justify-content: center;
-        }
-
-        .cat-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 60px;
-            font-weight: 600;
-            color: #e0e0e0;
-            cursor: pointer;
-        }
-
-        .cat-btn.active {
-            background: var(--accent);
-            color: white;
-        }
-
         .quiz-card, .result-card {
             background: var(--card-bg);
             border-radius: 2rem;
             padding: 1.5rem;
             box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 600;
         }
 
         .question-text {
@@ -271,6 +254,22 @@
             line-height: 1.5;
         }
 
+        .result-scores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .score-badge {
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+        }
+
         footer {
             text-align: center;
             margin-top: 1.5rem;
@@ -287,7 +286,6 @@
 </head>
 <body>
 <div class="main-container">
-    <!-- ПАНЕЛЬ ДОСТУПНОСТИ (БЕЗ ПЛАШКИ С НИКОМ И ДАТАМИ) -->
     <div class="accessibility-bar">
         <button class="access-btn" id="visionBtn">👁️ Режим для слабовидящих</button>
         <button class="access-btn" id="normalVisionBtn">🌞 Обычный режим</button>
@@ -299,14 +297,22 @@
 
     <div id="posterScreen" class="poster-screen"></div>
     <div id="quizScreen" class="quiz-screen">
-        <div class="category-tabs" id="categoryTabs"></div>
         <div id="quizContainer"></div>
-        <footer>🧡 Проект профориентации | 5 направлений</footer>
+        <footer>🧡 Проект профориентации | 20 вопросов | Единый результат</footer>
     </div>
 </div>
 
 <script>
-    // ------------------- ПОЛНЫЕ ДАННЫЕ ДЛЯ ВСЕХ ЯЗЫКОВ -------------------
+    // ------------------- СКРЫТЫЙ ЛОКАЛЬНЫЙ СЧЁТЧИК ЗАХОДОВ (без кнопки) -------------------
+    (function() {
+        let visits = localStorage.getItem('secretVisitCount');
+        if (visits === null) visits = 1;
+        else visits = Number(visits) + 1;
+        localStorage.setItem('secretVisitCount', visits);
+        console.log('[Локальный счётчик] Заходов с этого браузера:', visits);
+    })();
+
+    // ------------------- ПОЛНАЯ ЛОКАЛИЗАЦИЯ ДЛЯ ВСЕХ ЯЗЫКОВ -------------------
     const LOCALES = {
         ru: {
             poster: {
@@ -314,18 +320,18 @@
                 title: "Спасённое хобби",
                 subtitle: "Найди занятие, которое зажжёт тебя",
                 aboutTitle: "📌 О проекте",
-                aboutText: "Мы помогаем людям открыть свои истинные интересы — в творчестве, спорте, интеллектуальных играх, стратегиях и коллекционировании. Ответь на вопросы — получи идеальное хобби.",
-                features: ["🎨 5 направлений", "🧠 4 вопроса", "⚡ 2 минуты", "🎯 Персональный результат"],
+                aboutText: "20 вопросов объединяют творчество, спорт, интеллект, стратегию и коллекционирование. Ты получишь единый профиль твоих интересов.",
+                features: ["🎨 5 сфер", "📋 20 вопросов", "⚡ 3 минуты", "🎯 Синтез интересов"],
                 startBtn: "🚀 Пройти опросник →",
-                footerNote: "🔥 Помогаем найти своё хобби"
+                footerNote: "🔥 Найди своё уникальное хобби"
             },
             common: { backToMain: "🏠 На главную", prev: "← Назад", restart: "🔄 Пройти заново" },
-            categories: {
-                art: "🎨 Творчество и рукоделие",
-                sport: "🏃 Спорт и активный отдых",
-                intellect: "🧠 Интеллектуальная деятельность",
-                strategy: "♟️ Стратегия и логика",
-                collecting: "🏺 Коллекционирование"
+            resultStyles: {
+                art: { name: "🎨 Творчество и рукоделие", examples: "рисование, скетчинг, керамика, вязание, музыка, дизайн" },
+                sport: { name: "🏃 Спорт и активность", examples: "бег, йога, танцы, велоспорт, скалолазание, фитнес" },
+                intellect: { name: "🧠 Интеллект и знания", examples: "история, языки, программирование, научпоп, шахматы, чтение" },
+                strategy: { name: "♟️ Стратегия и логика", examples: "настольные стратегии, го, покер, управленческие симуляторы, проектирование" },
+                collecting: { name: "🏺 Коллекционирование", examples: "марки, монеты, винил, антиквариат, артефакты, модели" }
             },
             questions: {
                 art: ["Что вам ближе?", "Ваш идеальный результат — это...", "В магазине для хобби вас тянет в отдел...", "Процесс для вас — это..."],
@@ -365,31 +371,27 @@
                     ["Полное собрание серии", "Тематическая история", "Самые ценные вещи", "Личный музей"],
                     ["Найти давно искомое", "Изучать экспонаты", "Инвестиционная ценность", "Поделиться с другими"]
                 ]
-            },
-            results: {
-                art: { a: "🎨 Изобразительное искусство", b: "🏺 Объёмное творчество", c: "🎵 Музыка", d: "🧵 Рукоделие" },
-                sport: { a: "🏂 Экстремальные виды", b: "💪 Фитнес и йога", c: "⛰️ Активный туризм", d: "💃 Танцы" },
-                intellect: { a: "📜 История и искусствоведение", b: "🔬 Наука и технологии", c: "🌍 Гуманитарные науки", d: "📚 Прикладное самообразование" },
-                strategy: { a: "👑 Стратегические игры", b: "🎭 Тактические игры", c: "🔍 Головоломки", d: "🧩 Конструирование" },
-                collecting: { a: "🖼️ Серийное коллекционирование", b: "📜 Историческое", c: "💰 Инвестиционное", d: "📷 Ностальгическое" }
-            },
-            resultDesc: {
-                art: "Тебе нравится создавать визуальные образы",
-                sport: "Ты ищешь драйв и активность",
-                intellect: "Твоя стихия — знания",
-                strategy: "Стратег до мозга костей",
-                collecting: "Ты ценишь редкости"
             }
         },
         en: {
             poster: {
-                emoji: "🎯✨🎨", title: "Saved Hobby", subtitle: "Find your passion",
-                aboutTitle: "📌 About", aboutText: "We help you discover your true interests. Answer questions and get the perfect hobby match.",
-                features: ["🎨 5 categories", "🧠 4 questions", "⚡ 2 minutes", "🎯 Personal result"],
-                startBtn: "🚀 Take the quiz →", footerNote: "🔥 Find your hobby"
+                emoji: "🎯✨🎨",
+                title: "Saved Hobby",
+                subtitle: "Find your passion",
+                aboutTitle: "📌 About",
+                aboutText: "20 questions combine creativity, sports, intellect, strategy and collecting. Get a unified profile of your interests.",
+                features: ["🎨 5 areas", "📋 20 questions", "⚡ 3 minutes", "🎯 Interest synthesis"],
+                startBtn: "🚀 Take the quiz →",
+                footerNote: "🔥 Find your unique hobby"
             },
             common: { backToMain: "🏠 Main", prev: "← Back", restart: "🔄 Restart" },
-            categories: { art: "🎨 Art & Craft", sport: "🏃 Sports", intellect: "🧠 Intellectual", strategy: "♟️ Strategy", collecting: "🏺 Collecting" },
+            resultStyles: {
+                art: { name: "🎨 Art & Craft", examples: "drawing, ceramics, knitting, music, design" },
+                sport: { name: "🏃 Sports & Activity", examples: "running, yoga, dancing, cycling, climbing" },
+                intellect: { name: "🧠 Intellect & Knowledge", examples: "history, languages, coding, chess, reading" },
+                strategy: { name: "♟️ Strategy & Logic", examples: "board games, Go, poker, simulations, engineering" },
+                collecting: { name: "🏺 Collecting", examples: "stamps, coins, vinyl, antiques, models" }
+            },
             questions: {
                 art: ["What is closer to you?", "Your ideal result?", "Preferred store section?", "Process for you is..."],
                 sport: ["What matters most?", "Ideal training location?", "Main motivator?", "What gear do you choose?"],
@@ -428,31 +430,27 @@
                     ["Complete set", "Thematic story", "Valuable items", "Personal museum"],
                     ["Find long-sought", "Study exhibits", "Investment value", "Share with others"]
                 ]
-            },
-            results: {
-                art: { a: "🎨 Fine Arts", b: "🏺 3D Art", c: "🎵 Music", d: "🧵 Handicraft" },
-                sport: { a: "🏂 Extreme Sports", b: "💪 Fitness & Yoga", c: "⛰️ Hiking", d: "💃 Dancing" },
-                intellect: { a: "📜 History", b: "🔬 Science & Tech", c: "🌍 Humanities", d: "📚 Self-education" },
-                strategy: { a: "👑 Strategy Games", b: "🎭 Tactical Games", c: "🔍 Puzzles", d: "🧩 Engineering" },
-                collecting: { a: "🖼️ Series Collecting", b: "📜 Historical", c: "💰 Investment", d: "📷 Nostalgic" }
-            },
-            resultDesc: {
-                art: "You love visual creation",
-                sport: "You seek action",
-                intellect: "Knowledge is your power",
-                strategy: "Strategic mind",
-                collecting: "You value rarities"
             }
         },
         zh: {
             poster: {
-                emoji: "🎯✨🎨", title: "拯救爱好", subtitle: "找到你的热情",
-                aboutTitle: "📌 关于项目", aboutText: "我们帮助你发现真正的兴趣。回答问题，获得完美爱好推荐。",
-                features: ["🎨 5个方向", "🧠 4个问题", "⚡ 2分钟", "🎯 个性化结果"],
-                startBtn: "🚀 开始测试 →", footerNote: "🔥 找到你的爱好"
+                emoji: "🎯✨🎨",
+                title: "拯救爱好",
+                subtitle: "找到你的热情",
+                aboutTitle: "📌 关于项目",
+                aboutText: "20个问题涵盖创意、运动、智力、策略和收藏。获得你的综合兴趣画像。",
+                features: ["🎨 5个领域", "📋 20个问题", "⚡ 3分钟", "🎯 兴趣合成"],
+                startBtn: "🚀 开始测试 →",
+                footerNote: "🔥 找到你独特的爱好"
             },
             common: { backToMain: "🏠 主页", prev: "← 返回", restart: "🔄 重新测试" },
-            categories: { art: "🎨 艺术与手工", sport: "🏃 运动", intellect: "🧠 智力", strategy: "♟️ 策略", collecting: "🏺 收藏" },
+            resultStyles: {
+                art: { name: "🎨 艺术与手工", examples: "绘画，陶艺，编织，音乐，设计" },
+                sport: { name: "🏃 运动与活动", examples: "跑步，瑜伽，舞蹈，骑行，攀岩" },
+                intellect: { name: "🧠 智力与知识", examples: "历史，语言，编程，象棋，阅读" },
+                strategy: { name: "♟️ 策略与逻辑", examples: "桌游，围棋，扑克，模拟，工程" },
+                collecting: { name: "🏺 收藏", examples: "邮票，硬币，黑胶，古董，模型" }
+            },
             questions: {
                 art: ["什么更吸引你？", "理想的结果是？", "商店吸引你的区域？", "过程对你来说..."],
                 sport: ["活动中最重要的是？", "理想训练地点？", "主要动力？", "选择什么装备？"],
@@ -491,36 +489,50 @@
                     ["完整系列", "主题故事", "最有价值的物品", "个人博物馆"],
                     ["找到久寻之物", "研究展品", "投资价值", "与他人分享"]
                 ]
-            },
-            results: {
-                art: { a: "🎨 美术", b: "🏺 立体艺术", c: "🎵 音乐", d: "🧵 手工" },
-                sport: { a: "🏂 极限运动", b: "💪 健身瑜伽", c: "⛰️ 徒步", d: "💃 舞蹈" },
-                intellect: { a: "📜 历史", b: "🔬 科学技术", c: "🌍 人文", d: "📚 自学" },
-                strategy: { a: "👑 策略游戏", b: "🎭 战术游戏", c: "🔍 谜题", d: "🧩 构造" },
-                collecting: { a: "🖼️ 系列收藏", b: "📜 历史收藏", c: "💰 投资收藏", d: "📷 怀旧收藏" }
-            },
-            resultDesc: {
-                art: "你喜欢创造视觉",
-                sport: "你追求活力",
-                intellect: "知识是你的力量",
-                strategy: "战略家思维",
-                collecting: "你珍视珍品"
             }
         }
     };
 
+    // ------------------- ПОСТРОЕНИЕ ЕДИНОГО МАССИВА ВОПРОСОВ -------------------
+    const questionOrder = [
+        "art","art","art","art",
+        "sport","sport","sport","sport",
+        "intellect","intellect","intellect","intellect",
+        "strategy","strategy","strategy","strategy",
+        "collecting","collecting","collecting","collecting"
+    ];
+
+    function buildUnifiedQuestions(lang) {
+        const data = LOCALES[lang];
+        if (!data) return buildUnifiedQuestions('ru');
+        const questions = [];
+        let idx = 0;
+        for (let cat of questionOrder) {
+            const qIdx = idx % 4;
+            const text = data.questions[cat][qIdx];
+            const options = data.options[cat][qIdx];
+            questions.push({ category: cat, text: text, options: options });
+            idx++;
+        }
+        return questions;
+    }
+
     // ------------------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ -------------------
     let currentLang = 'ru';
-    let currentCategory = "art";
+    let currentQuestions = [];
     let currentQuestionIndex = 0;
     let answers = [];
     let finished = false;
     let showingPoster = true;
 
-    // ------------------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ -------------------
     function t(key) {
-        let val = key.split('.').reduce((o, k) => o?.[k], LOCALES[currentLang]);
-        return val || key;
+        const parts = key.split('.');
+        let val = LOCALES[currentLang];
+        for (let p of parts) {
+            if (val[p] === undefined) return key;
+            val = val[p];
+        }
+        return val;
     }
 
     function speakText(text) {
@@ -547,7 +559,6 @@
         return qText + ' ' + optionsLabel + opts;
     }
 
-    // ------------------- ОТРИСОВКА ЭКРАНОВ -------------------
     function renderPoster() {
         const p = LOCALES[currentLang].poster;
         const posterDiv = document.getElementById('posterScreen');
@@ -572,44 +583,17 @@
             finished = false;
             answers = [];
             currentQuestionIndex = 0;
+            currentQuestions = buildUnifiedQuestions(currentLang);
             document.getElementById('posterScreen').style.display = 'none';
             document.getElementById('quizScreen').style.display = 'block';
-            renderCategoryTabs();
             renderCurrentQuestion();
         });
     }
 
-    function renderCategoryTabs() {
-        const container = document.getElementById("categoryTabs");
-        const cats = Object.keys(LOCALES.ru.categories);
-        container.innerHTML = cats.map(cat => `
-            <button class="cat-btn ${currentCategory === cat ? 'active' : ''}" data-cat="${cat}">
-                ${LOCALES[currentLang].categories[cat]}
-            </button>
-        `).join("");
-        document.querySelectorAll(".cat-btn").forEach(btn => {
-            btn.addEventListener("click", () => {
-                currentCategory = btn.dataset.cat;
-                resetQuizState();
-                renderCategoryTabs();
-                renderCurrentQuestion();
-            });
-        });
-    }
-
-    function resetQuizState() {
-        currentQuestionIndex = 0;
-        answers = [];
-        finished = false;
-    }
-
     function renderCurrentQuestion() {
-        const surveyKey = currentCategory;
-        const qTexts = LOCALES[currentLang].questions[surveyKey];
-        const optsArray = LOCALES[currentLang].options[surveyKey];
-        if (!optsArray || !qTexts) return;
-        const currentOpts = optsArray[currentQuestionIndex];
-        const optionsHtml = currentOpts.map((opt, idx) => {
+        if (!currentQuestions.length) return;
+        const q = currentQuestions[currentQuestionIndex];
+        const optionsHtml = q.options.map((opt, idx) => {
             const letter = String.fromCharCode(97 + idx);
             return `<div class="option-item" data-type="${letter}">
                         <span class="opt-letter">${String.fromCharCode(65 + idx)}</span>
@@ -619,10 +603,9 @@
         const html = `
             <div class="quiz-card">
                 <div class="question-header">
-                    <span class="cat-label">${LOCALES[currentLang].categories[surveyKey]}</span>
-                    <span class="q-counter">${currentQuestionIndex + 1} / 4</span>
+                    <span>Вопрос ${currentQuestionIndex+1} / ${currentQuestions.length}</span>
                 </div>
-                <div class="question-text">${qTexts[currentQuestionIndex]}</div>
+                <div class="question-text">${q.text}</div>
                 <div class="options-list">${optionsHtml}</div>
                 <div class="nav-buttons">
                     <button class="btn-secondary" id="prevBtn" ${currentQuestionIndex === 0 ? 'disabled' : ''}>${LOCALES[currentLang].common.prev}</button>
@@ -634,8 +617,9 @@
         document.querySelectorAll(".option-item").forEach(el => {
             el.addEventListener("click", () => {
                 if (finished) return;
-                answers.push(el.dataset.type);
-                if (currentQuestionIndex + 1 < 4) {
+                const answerLetter = el.dataset.type;
+                answers.push({ category: q.category, answer: answerLetter });
+                if (currentQuestionIndex + 1 < currentQuestions.length) {
                     currentQuestionIndex++;
                     renderCurrentQuestion();
                 } else {
@@ -660,19 +644,26 @@
     }
 
     function renderResult() {
-        const surveyKey = currentCategory;
-        const counts = { a: 0, b: 0, c: 0, d: 0 };
-        answers.forEach(a => counts[a]++);
-        let maxType = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-        const resultText = LOCALES[currentLang].results[surveyKey][maxType];
-        const desc = LOCALES[currentLang].resultDesc[surveyKey] + " ✨";
+        const scores = { art: 0, sport: 0, intellect: 0, strategy: 0, collecting: 0 };
+        for (let ans of answers) {
+            if (scores[ans.category] !== undefined) scores[ans.category]++;
+        }
+        const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+        const top3 = sorted.slice(0,3);
+        const resultStyles = LOCALES[currentLang].resultStyles;
+        const top3Html = top3.map(([cat, score]) => {
+            const style = resultStyles[cat];
+            return `<div class="score-badge"><strong>${style.name}</strong> — ${style.examples}</div>`;
+        }).join('');
         const html = `
             <div class="result-card">
-                <div class="result-emoji">✨</div>
-                <div class="result-title">${LOCALES[currentLang].common.restart}</div>
+                <div class="result-emoji">🏆</div>
+                <div class="result-title">Ваш профиль хобби</div>
                 <div class="result-desc">
-                    <strong>${resultText}</strong>
-                    <p style="margin-top:12px;">${desc}</p>
+                    <strong>Синтез интересов</strong>
+                    <p style="margin-top:12px;">На основе 20 ответов мы определили твои главные сферы:</p>
+                    <div class="result-scores">${top3Html}</div>
+                    <p style="margin-top:12px;">✨ Попробуй комбинировать направления — например, <strong>${top3[0][1] > 0 ? resultStyles[top3[0][0]]?.name : 'творчество'}</strong> с элементами <strong>${top3[1] ? resultStyles[top3[1][0]]?.name : 'спорта'}</strong> — так ты найдёшь своё уникальное хобби.</p>
                 </div>
                 <button class="restart-btn" id="restartSurveyBtn">${LOCALES[currentLang].common.restart}</button>
                 <button class="back-to-poster" id="backToPosterBtn2">${LOCALES[currentLang].common.backToMain}</button>
@@ -680,7 +671,9 @@
         `;
         document.getElementById("quizContainer").innerHTML = html;
         document.getElementById("restartSurveyBtn")?.addEventListener("click", () => {
-            resetQuizState();
+            finished = false;
+            answers = [];
+            currentQuestionIndex = 0;
             renderCurrentQuestion();
         });
         document.getElementById("backToPosterBtn2")?.addEventListener("click", () => {
@@ -698,9 +691,11 @@
         if (showingPoster) {
             renderPoster();
         } else {
-            renderCategoryTabs();
-            if (finished) renderResult();
-            else renderCurrentQuestion();
+            showingPoster = true;
+            finished = false;
+            document.getElementById('quizScreen').style.display = 'none';
+            document.getElementById('posterScreen').style.display = 'block';
+            renderPoster();
         }
     }
 
@@ -710,7 +705,6 @@
         localStorage.setItem('visionMode', enable);
     }
 
-    // ------------------- ИНИЦИАЛИЗАЦИЯ -------------------
     (function init() {
         if (localStorage.getItem('visionMode') === 'true') document.body.classList.add('visually-impaired');
         document.getElementById('visionBtn')?.addEventListener('click', () => toggleVisionMode(true));
